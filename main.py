@@ -65,10 +65,11 @@ def deep_dream(image, model, iterations, lr, octave_scale, num_octaves):
 
 class Parser:
     input_image = 'images/Gyeongbokgung.jpg'
+    output_filename = 'Gyeongbokgung'
     iterations = 20
-    at_layer = 27
+    til_layer = 27
     lr = 0.01
-    otave_scale = 1.4
+    octave_scale = 1.4
     num_octaves = 10
 
 def main():
@@ -79,27 +80,26 @@ def main():
     # Define the model
     network = models.vgg19(pretrained=True)
     layers = list(network.features.children())
-    model = nn.Sequential(*layers[: (args.at_layer + 1)])
-    if torch.cuda.is_available:
-        model = model.cuda()
-    print(network)
 
-    # Extract deep dream image
-    dreamed_image = deep_dream(
-        image,
-        model,
-        iterations=args.iterations,
-        lr=args.lr,
-        octave_scale=args.octave_scale,
-        num_octaves=args.num_octaves,
-    )
+    for layer in range(1, args.til_layer+1):
+        model = nn.Sequential(*layers[: (layer + 1)])
+        if torch.cuda.is_available:
+            model = model.cuda()
+        dreamed_image = deep_dream(
+            image,
+            model,
+            iterations=args.iterations,
+            lr=args.lr,
+            octave_scale=args.octave_scale,
+            num_octaves=args.num_octaves,
+        )
+        # Save and plot image
+        os.makedirs("outputs", exist_ok=True)
+        os.makedirs(f"outputs/{args.output_filename}", exist_ok=True)
+        plt.figure(figsize=(20, 20))
+        plt.imshow(dreamed_image)
+        # plt.show()
+        plt.savefig(f"outputs/{args.output_filename}/{layer}.png")
 
-    # Save and plot image
-    os.makedirs("outputs", exist_ok=True)
-    filename = args.input_image.split("/")[-1]
-    plt.figure(figsize=(20, 20))
-    plt.imshow(dreamed_image)
-    plt.imsave(f"outputs/output_{filename}", dreamed_image)
-    plt.show()
 
 main()

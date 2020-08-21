@@ -1,9 +1,9 @@
-##"# deepdream"
+## "# deepdream"
 pytorch. torchvision. opencv. numpy. matplotlib. PIL. tqdm
 
-###Input image
+### Input image
 ![Input](/images/Gyeongbokgung.jpg)
-###One of output images
+### One of output images
 ![Output at layer 27 of vgg19](/outputs/Gyeongbokgung/27.png)
 
 used vgg19 model pretrained on ImageNet
